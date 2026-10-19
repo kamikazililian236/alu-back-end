@@ -1,0 +1,490 @@
+/* ==========================================================================
+   main.css - Core Design Tokens, Typography, Resets & Hand-Drawable Wireframe Base
+   Book & Notes Vault
+   ========================================================================== */
+
+:root {
+  /* Navy Outline Wireframe Palette */
+  --color-navy: #1b2a4a;
+  --color-navy-dark: #0f172a;
+  --color-navy-light: #2c3e66;
+  --color-navy-muted: #5a6b8c;
+  --color-navy-subtle: #e2e8f0;
+  --color-navy-soft-bg: #f1f5f9;
+  
+  --color-bg: #ffffff;
+  --color-paper: #f8fafc;
+  --color-card-bg: #ffffff;
+  
+  /* Status Colors (Subtle & High Contrast Navy Outlined) */
+  --status-read-bg: #ecfdf5;
+  --status-read-border: #059669;
+  --status-read-text: #065f46;
+
+  --status-reading-bg: #eff6ff;
+  --status-reading-border: #2563eb;
+  --status-reading-text: #1e40af;
+
+  --status-toread-bg: #fefce8;
+  --status-toread-border: #d97706;
+  --status-toread-text: #92400e;
+
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #dc2626;
+  --color-danger-text: #991b1b;
+
+  --color-highlight: #fef08a;
+  --color-highlight-border: #ca8a04;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* Wireframe Borders & Radii */
+  --border-width: 1.5px;
+  --border-thick: 2px;
+  --border-radius: 6px;
+  --border-radius-sm: 4px;
+  --border-radius-pill: 9999px;
+
+  /* Shadows (Minimal / Blueprint wireframe style) */
+  --shadow-wire: 2px 2px 0px rgba(27, 42, 74, 0.15);
+  --shadow-wire-sm: 1px 1px 0px rgba(27, 42, 74, 0.12);
+  --shadow-wire-lg: 4px 4px 0px rgba(27, 42, 74, 0.2);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* Base Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: var(--color-paper);
+  color: var(--color-navy-dark);
+}
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-paper);
+  color: var(--color-navy-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessibility: Skip to Content */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  background: var(--color-navy);
+  color: #ffffff;
+  padding: 8px 16px;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  z-index: 10000;
+  text-decoration: none;
+  transition: top var(--transition-fast);
+  border: var(--border-width) solid #ffffff;
+}
+
+.skip-link:focus {
+  top: 10px;
+  outline: 3px solid #facc15;
+}
+
+/* Focus Indicator for keyboard accessibility */
+:focus-visible {
+  outline: 2.5px solid var(--color-navy);
+  outline-offset: 2px;
+}
+
+/* Wireframe Sketch Mode (Hand-drawn student aesthetic toggle) */
+body.sketch-mode {
+  background-image: 
+    linear-gradient(to right, rgba(27, 42, 74, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 42, 74, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+body.sketch-mode .wire-box,
+body.sketch-mode .book-card,
+body.sketch-mode .stat-card,
+body.sketch-mode .records-table,
+body.sketch-mode .nav-btn,
+body.sketch-mode .btn,
+body.sketch-mode .form-input,
+body.sketch-mode .form-select,
+body.sketch-mode .sidebar-box {
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: 2px 3px 0px rgba(27, 42, 74, 0.25);
+}
+
+/* Perspective Banner & Toolbar */
+.perspective-bar {
+  background-color: #ffffff;
+  border-bottom: var(--border-width) solid var(--color-navy);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.85rem;
+  z-index: 900;
+}
+
+.perspective-label {
+  font-weight: 700;
+  color: var(--color-navy);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.perspective-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.perspective-btn {
+  background: transparent;
+  border: var(--border-width) solid var(--color-navy);
+  border-radius: var(--border-radius-sm);
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all var(--transition-fast);
+}
+
+.perspective-btn:hover {
+  background-color: var(--color-navy-soft-bg);
+}
+
+.perspective-btn.active {
+  background-color: var(--color-navy);
+  color: #ffffff;
+}
+
+.sketch-toggle-btn {
+  background: transparent;
+  border: var(--border-width) dashed var(--color-navy);
+  border-radius: var(--border-radius-sm);
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  cursor: pointer;
+}
+
+.sketch-toggle-btn.active {
+  background: var(--color-navy-dark);
+  color: #ffffff;
+  border-style: solid;
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-navy);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.35rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+p {
+  color: var(--color-navy-dark);
+}
+
+a {
+  color: var(--color-navy);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--color-navy-light);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Utility Containers */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Simple Wireframe Icons (SVG inline helpers) */
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon-lg {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-sm {
+  width: 14px;
+  height: 14px;
+}
+
+/* App Header */
+.app-header {
+  background-color: var(--color-bg);
+  border-bottom: var(--border-width) solid var(--color-navy);
+  position: sticky;
+  top: 0;
+  z-index: 800;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  gap: var(--space-md);
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--color-navy);
+}
+
+.brand-icon-box {
+  width: 36px;
+  height: 36px;
+  border: var(--border-width) solid var(--color-navy);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-navy-soft-bg);
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-navy);
+}
+
+.brand-subtitle-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border: 1px solid var(--color-navy);
+  border-radius: var(--border-radius-pill);
+  margin-left: 6px;
+  font-weight: 700;
+  background: var(--color-paper);
+}
+
+/* Navigation - Desktop */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--border-radius);
+  color: var(--color-navy);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  background-color: var(--color-navy-soft-bg);
+  border-color: var(--color-navy);
+}
+
+.nav-link.active {
+  background-color: var(--color-navy);
+  color: #ffffff;
+  border-color: var(--color-navy);
+}
+
+.nav-link.active .icon {
+  stroke: #ffffff;
+}
+
+/* Mobile Hamburger Menu Button */
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: var(--border-width) solid var(--color-navy);
+  border-radius: var(--border-radius-sm);
+  padding: 6px 10px;
+  color: var(--color-navy);
+  cursor: pointer;
+}
+
+/* Mobile Dropdown Navigation Drawer */
+.mobile-nav-drawer {
+  display: none;
+  background-color: #ffffff;
+  border-bottom: var(--border-thick) solid var(--color-navy);
+  padding: 12px 16px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-nav-drawer.open {
+  display: flex;
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: var(--border-width) solid var(--color-navy-subtle);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: var(--color-navy);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.mobile-nav-link.active {
+  background-color: var(--color-navy);
+  color: #ffffff;
+  border-color: var(--color-navy);
+}
+
+/* Bottom Navigation for Mobile */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border-top: var(--border-thick) solid var(--color-navy);
+  z-index: 850;
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mobile-bottom-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 10px;
+  text-decoration: none;
+  color: var(--color-navy-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  flex: 1;
+}
+
+.mobile-bottom-item.active {
+  color: var(--color-navy);
+  font-weight: 800;
+}
+
+.mobile-bottom-item.active .icon {
+  stroke: var(--color-navy);
+  stroke-width: 2.5;
+}
+
+/* Main Content Area */
+#main-content {
+  flex: 1;
+  padding: var(--space-lg) 0;
+}
+
+/* Footer */
+.app-footer {
+  background-color: #ffffff;
+  border-top: var(--border-width) solid var(--color-navy);
+  padding: 16px 0;
+  font-size: 0.85rem;
+  color: var(--color-navy-muted);
+  text-align: center;
+  margin-top: auto;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}

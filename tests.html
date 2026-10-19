@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validation & Regex Unit Tests — Book & Notes Vault</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <style>
+    body {
+      background-color: var(--color-paper);
+      padding: 32px 16px;
+    }
+    .test-suite-header {
+      background: #ffffff;
+      border: var(--border-thick) solid var(--color-navy);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-wire);
+    }
+    .test-summary-bar {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .test-badge {
+      padding: 6px 14px;
+      border: var(--border-width) solid var(--color-navy);
+      border-radius: var(--border-radius-pill);
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+    .test-badge.passed {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #059669;
+    }
+    .test-badge.failed {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #dc2626;
+    }
+    .test-badge.total {
+      background: var(--color-navy-soft-bg);
+      color: var(--color-navy);
+    }
+    .test-group {
+      background: #ffffff;
+      border: var(--border-width) solid var(--color-navy);
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-wire-sm);
+    }
+    .test-group-title {
+      background: var(--color-navy-soft-bg);
+      padding: 12px 18px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-navy);
+      border-bottom: var(--border-width) solid var(--color-navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .test-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .test-item {
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--color-navy-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+    .test-item:last-child {
+      border-bottom: none;
+    }
+    .test-status-pill {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--border-radius-pill);
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+    .test-status-pill.pass {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #059669;
+    }
+    .test-status-pill.fail {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #dc2626;
+    }
+    .test-details {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-navy-muted);
+    }
+    .interactive-tester-box {
+      background: #ffffff;
+      border: var(--border-thick) solid var(--color-navy);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-top: 32px;
+      box-shadow: var(--shadow-wire);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 900px;">
+    <!-- Header -->
+    <header class="test-suite-header">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h1>Automated Test Runner & Regex Verification</h1>
+          <p style="color: var(--color-navy-muted); margin-top: 4px;">
+            Verifying validation rules, regex edge cases, ISBN extraction, and storage integrity.
+          </p>
+        </div>
+        <a href="./index.html" class="btn btn-secondary">
+          ← Return to Book Vault
+        </a>
+      </div>
+
+      <div class="test-summary-bar">
+        <div class="test-badge total" id="badge-total">Total Tests: 0</div>
+        <div class="test-badge passed" id="badge-passed">Passed: 0</div>
+        <div class="test-badge failed" id="badge-failed">Failed: 0</div>
+      </div>
+    </header>
+
+    <!-- Test Output Container -->
+    <div id="test-results-container"></div>
+
+    <!-- Live Interactive Regex Validator Playground -->
+    <section class="interactive-tester-box" aria-label="Interactive Regex Playground">
+      <h2>Interactive Regex Playground</h2>
+      <p style="font-size: 0.88rem; color: var(--color-navy-muted); margin: 6px 0 16px;">
+        Type custom inputs below to immediately verify how the validator rules behave.
+      </p>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="play-title" class="form-label">Rule 1 Test: Title / Author</label>
+          <input type="text" id="play-title" class="form-input" placeholder="Try: ' Valid ' or 'Double  Space'" />
+          <div id="play-title-res" class="form-hint" style="margin-top: 4px;"></div>
+        </div>
+
+        <div class="form-field">
+          <label for="play-pages" class="form-label">Rule 2 Test: Pages</label>
+          <input type="text" id="play-pages" class="form-input" placeholder="Try: '-5' or 'abc' or '450'" />
+          <div id="play-pages-res" class="form-hint" style="margin-top: 4px;"></div>
+        </div>
+
+        <div class="form-field">
+          <label for="play-date" class="form-label">Rule 3 Test: Date Added (YYYY-MM-DD)</label>
+          <input type="text" id="play-date" class="form-input" placeholder="Try: '2024-02-29' or '2023-02-29'" />
+          <div id="play-date-res" class="form-hint" style="margin-top: 4px;"></div>
+        </div>
+
+        <div class="form-field">
+          <label for="play-tag" class="form-label">Rule 4 Test: Tag / Genre</label>
+          <input type="text" id="play-tag" class="form-input" placeholder="Try: 'Sci-Fi' or 'Web Dev' or 'Tag@!'" />
+          <div id="play-tag-res" class="form-hint" style="margin-top: 4px;"></div>
+        </div>
+
+        <div class="form-field full-width">
+          <label for="play-repeat" class="form-label">Rule 5 Test: Repeated Words / Surnames</label>
+          <input type="text" id="play-repeat" class="form-input" placeholder="Try: 'Robert Martin Martin' or 'The The Great'" />
+          <div id="play-repeat-res" class="form-hint" style="margin-top: 4px;"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Scripts to test -->
+  <script src="scripts/validators.js"></script>
+  <script src="scripts/storage.js"></script>
+  <script src="scripts/search.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const resultsContainer = document.getElementById('test-results-container');
+      let totalTests = 0;
+      let passedTests = 0;
+      let failedTests = 0;
+
+      function assert(name, condition, details = '') {
+        totalTests++;
+        if (condition) {
+          passedTests++;
+          return { name, passed: true, details };
+        } else {
+          failedTests++;
+          return { name, passed: false, details };
+        }
+      }
+
+      const suites = [
+        {
+          title: "Rule 1: Title & Author (No leading/trailing or repeated spaces)",
+          tests: [
+            () => assert("Valid title: 'Clean Architecture'", Validators.validateTitle("Clean Architecture").valid),
+            () => assert("Rejects leading space: ' Clean Architecture'", !Validators.validateTitle(" Clean Architecture").valid),
+            () => assert("Rejects trailing space: 'Clean Architecture '", !Validators.validateTitle("Clean Architecture ").valid),
+            () => assert("Rejects double spaces: 'Clean  Architecture'", !Validators.validateTitle("Clean  Architecture").valid),
+            () => assert("Rejects single character: 'A'", !Validators.validateTitle("A").valid),
+            () => assert("Rejects empty string: ''", !Validators.validateTitle("").valid),
+            () => assert("Valid author: 'Robert Martin'", Validators.validateAuthor("Robert Martin").valid),
+            () => assert("Rejects author with trailing space", !Validators.validateAuthor("Robert Martin ").valid)
+          ]
+        },
+        {
+          title: "Rule 2: Number of Pages (Valid non-negative integer > 0)",
+          tests: [
+            () => assert("Valid page count: 432", Validators.validatePages(432).valid),
+            () => assert("Valid string page count: '350'", Validators.validatePages("350").valid),
+            () => assert("Rejects negative pages: -5", !Validators.validatePages(-5).valid),
+            () => assert("Rejects zero pages: 0", !Validators.validatePages(0).valid),
+            () => assert("Rejects non-numeric string: 'four hundred'", !Validators.validatePages("four hundred").valid),
+            () => assert("Rejects decimal pages: 12.5", !Validators.validatePages("12.5").valid)
+          ]
+        },
+        {
+          title: "Rule 3: Date Added (YYYY-MM-DD calendar verification)",
+          tests: [
+            () => assert("Valid standard date: '2026-10-12'", Validators.validateDate("2026-10-12").valid),
+            () => assert("Valid leap day: '2024-02-29'", Validators.validateDate("2024-02-29").valid),
+            () => assert("Rejects invalid leap day: '2023-02-29'", !Validators.validateDate("2023-02-29").valid),
+            () => assert("Rejects day 31 in 30-day month: '2026-04-31'", !Validators.validateDate("2026-04-31").valid),
+            () => assert("Rejects slash format: '2026/10/12'", !Validators.validateDate("2026/10/12").valid),
+            () => assert("Rejects invalid month: '2026-13-01'", !Validators.validateDate("2026-13-01").valid)
+          ]
+        },
+        {
+          title: "Rule 4: Tags (Alphanumeric words with hyphens or spaces)",
+          tests: [
+            () => assert("Valid single tag: 'Productivity'", Validators.validateTag("Productivity").valid),
+            () => assert("Valid hyphenated tag: 'UI-UX Design'", Validators.validateTag("UI-UX Design").valid),
+            () => assert("Valid spaced tag: 'Software Engineering'", Validators.validateTag("Software Engineering").valid),
+            () => assert("Rejects special characters: 'Tag@#$'", !Validators.validateTag("Tag@#$").valid),
+            () => assert("Rejects trailing hyphen: 'Design-'", !Validators.validateTag("Design-").valid)
+          ]
+        },
+        {
+          title: "Rule 5: Advanced Regex (Repeated words & surnames detection)",
+          tests: [
+            () => assert("Detects repeated word: 'Martin Martin'", Validators.detectRepeatedWords("Martin Martin") !== null),
+            () => assert("Detects repeated word: 'The The Great Gatsby'", Validators.detectRepeatedWords("The The Great Gatsby") !== null),
+            () => assert("Passes clean title: 'The Great Gatsby'", Validators.detectRepeatedWords("The Great Gatsby") === null)
+          ]
+        },
+        {
+          title: "ISBN Extraction & Regex Helper",
+          tests: [
+            () => {
+              const res = Validators.extractISBN("ISBN-13: 978-0-13-449416-6");
+              return assert("Extracts valid ISBN-13", res.length === 1 && res[0].clean === "9780134494166");
+            },
+            () => {
+              const res = Validators.extractISBN("Older edition: 0-13-449416-4");
+              return assert("Extracts valid ISBN-10", res.length === 1 && res[0].clean === "0134494164");
+            },
+            () => {
+              const res = Validators.extractISBN("No barcode numbers in this random paragraph.");
+              return assert("Safely handles text without ISBN", res.length === 0);
+            }
+          ]
+        },
+        {
+          title: "Search Engine & Safe Regex Compilation",
+          tests: [
+            () => {
+              const comp = SearchEngine.compileRegex("Clean.*", true);
+              return assert("Compiles valid regex without errors", comp.regex !== null && comp.error === null);
+            },
+            () => {
+              const comp = SearchEngine.compileRegex("[invalid(regex", true);
+              return assert("Safely catches invalid regex syntax without crash", comp.regex === null && comp.error !== null);
+            },
+            () => {
+              const hl = SearchEngine.highlightText("Clean Code", "Clean", false, true);
+              return assert("Wraps match in <mark class='regex-highlight'>", hl.includes("<mark class=\"regex-highlight\">Clean</mark>"));
+            },
+            () => {
+              const hl = SearchEngine.highlightText("<script>alert(1)</script>", "script", false, true);
+              return assert("Safely escapes raw HTML inside search text", !hl.includes("<script>") && hl.includes("&lt;"));
+            }
+          ]
+        },
+        {
+          title: "Dashboard Statistics Calculations",
+          tests: [
+            () => {
+              const sample = [
+                { pages: 200, status: "Read", tag: "Tech", dateAdded: "2026-10-12" },
+                { pages: 300, status: "Reading", tag: "Tech", dateAdded: "2026-10-10" }
+              ];
+              const stats = SearchEngine.calculateStatistics(sample, { readingTarget: 10, targetType: 'books' });
+              return assert("Calculates total books and pages correctly", stats.totalBooks === 2 && stats.totalPages === 500 && stats.totalBooksRead === 1);
+            }
+          ]
+        }
+      ];
+
+      // Run suites
+      let suitesHtml = '';
+      suites.forEach(suite => {
+        const testResults = suite.tests.map(fn => fn());
+        const groupPassed = testResults.every(r => r.passed);
+
+        suitesHtml += `
+          <div class="test-group">
+            <div class="test-group-title">
+              <span>${suite.title}</span>
+              <span class="test-status-pill ${groupPassed ? 'pass' : 'fail'}">${groupPassed ? 'All Passed' : 'Failures'}</span>
+            </div>
+            <ul class="test-list">
+              ${testResults.map(r => `
+                <li class="test-item">
+                  <span>${r.name}</span>
+                  <span class="test-status-pill ${r.passed ? 'pass' : 'fail'}">${r.passed ? 'PASS' : 'FAIL'}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      });
+
+      resultsContainer.innerHTML = suitesHtml;
+      document.getElementById('badge-total').textContent = `Total Tests: ${totalTests}`;
+      document.getElementById('badge-passed').textContent = `Passed: ${passedTests}`;
+      document.getElementById('badge-failed').textContent = `Failed: ${failedTests}`;
+
+      // Interactive playground listeners
+      const playTitle = document.getElementById('play-title');
+      const playTitleRes = document.getElementById('play-title-res');
+      playTitle.addEventListener('input', () => {
+        const check = Validators.validateTitle(playTitle.value);
+        playTitleRes.innerHTML = check.valid 
+          ? '<span style="color:#059669;">✓ Valid title format</span>' 
+          : `<span style="color:#dc2626;">✗ ${check.message}</span>`;
+      });
+
+      const playPages = document.getElementById('play-pages');
+      const playPagesRes = document.getElementById('play-pages-res');
+      playPages.addEventListener('input', () => {
+        const check = Validators.validatePages(playPages.value);
+        playPagesRes.innerHTML = check.valid 
+          ? '<span style="color:#059669;">✓ Valid page integer</span>' 
+          : `<span style="color:#dc2626;">✗ ${check.message}</span>`;
+      });
+
+      const playDate = document.getElementById('play-date');
+      const playDateRes = document.getElementById('play-date-res');
+      playDate.addEventListener('input', () => {
+        const check = Validators.validateDate(playDate.value);
+        playDateRes.innerHTML = check.valid 
+          ? '<span style="color:#059669;">✓ Valid calendar date</span>' 
+          : `<span style="color:#dc2626;">✗ ${check.message}</span>`;
+      });
+
+      const playTag = document.getElementById('play-tag');
+      const playTagRes = document.getElementById('play-tag-res');
+      playTag.addEventListener('input', () => {
+        const check = Validators.validateTag(playTag.value);
+        playTagRes.innerHTML = check.valid 
+          ? '<span style="color:#059669;">✓ Valid tag format</span>' 
+          : `<span style="color:#dc2626;">✗ ${check.message}</span>`;
+      });
+
+      const playRepeat = document.getElementById('play-repeat');
+      const playRepeatRes = document.getElementById('play-repeat-res');
+      playRepeat.addEventListener('input', () => {
+        const warn = Validators.detectRepeatedWords(playRepeat.value);
+        playRepeatRes.innerHTML = warn 
+          ? `<span style="color:#d97706;">⚠️ ${warn}</span>` 
+          : '<span style="color:#059669;">✓ No duplicated consecutive words detected</span>';
+      });
+    });
+  </script>
+</body>
+</html>
